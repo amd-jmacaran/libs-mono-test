@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  MONOREPO_URL: github.com/amd-jmacaran/monorepo-scripts.git
+  MONOREPO_URL: github.com/amd-jmacaran/libs-mono-test.git
   MONOREPO_BRANCH: main
 
 jobs:
