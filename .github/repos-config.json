@@ -1,0 +1,16 @@
+{
+  "repositories": [
+    {
+      "name": "hipcub",
+      "url": "amd-jmacaran/hipCUB",
+      "branch": "develop",
+      "category": "projects"
+    },
+    {
+      "name": "rocthrust",
+      "url": "amd-jmacaran/rocThrust",
+      "branch": "develop",
+      "category": "projects"
+    }
+  ]
+}
