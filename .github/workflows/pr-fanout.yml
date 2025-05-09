@@ -91,5 +91,5 @@ jobs:
           python .github/scripts/pr_fanout.py \
             --repo "${{ github.repository }}" \
             --pr "${{ github.event.pull_request.number }}" \
-            --subtrees "${{ steps.detect.outputs.subtrees }}"
+            --subtrees "${{ steps.detect.outputs.subtrees }}" \
             --debug
