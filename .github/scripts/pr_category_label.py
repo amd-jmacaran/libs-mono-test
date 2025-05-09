@@ -33,7 +33,7 @@ import os
 import logging
 from pathlib import Path
 from typing import List, Optional
-from github_cli_client import GitHubCLIClient
+from github_api_client import GitHubAPIClient
 
 logger = logging.getLogger(__name__)
 
@@ -75,8 +75,8 @@ def output_labels(existing_labels: List[str], desired_labels: List[str], dry_run
         output_file = os.environ.get("GITHUB_OUTPUT")
         if output_file:
             with open(output_file, 'a') as f:
-                print(f"add={','.join(to_add)}", file=f)
-                print(f"remove={','.join(to_remove)}", file=f)
+                print(f"label_add={','.join(to_add)}", file=f)
+                print(f"label_remove={','.join(to_remove)}", file=f)
             logger.info(f"Wrote to GITHUB_OUTPUT: add={','.join(to_add)}")
             logger.info(f"Wrote to GITHUB_OUTPUT: remove={','.join(to_remove)}")
         else:
@@ -89,7 +89,7 @@ def main(argv=None) -> None:
     logging.basicConfig(
         level=logging.DEBUG if args.debug else logging.INFO
     )
-    client = GitHubCLIClient()
+    client = GitHubAPIClient()
     changed_files = [file for file in client.get_changed_files(args.repo, int(args.pr))]
     existing_labels = client.get_existing_labels_on_pr(args.repo, int(args.pr))
     desired_labels = compute_desired_labels(changed_files)
