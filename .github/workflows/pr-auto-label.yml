@@ -75,6 +75,7 @@ jobs:
           else
             PR_NUMBER="${{ github.event.pull_request.number }}"
           fi
+          echo "pr_number is $PR_NUMBER"
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Compute Category Labels for PR
