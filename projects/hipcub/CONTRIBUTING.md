@@ -4,7 +4,7 @@
   <meta name="keywords" content="ROCm, contributing, hipCUB">
 </head>
 
-# Contributing to hipCUB #
+# Contributing to hipCUB # ~~~~~
 
 We welcome contributions to hipCUB.  Please follow these details to help ensure your contributions will be successfully accepted.
 
