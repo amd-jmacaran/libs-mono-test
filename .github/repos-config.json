@@ -2,13 +2,13 @@
   "repositories": [
     {
       "name": "hipcub",
-      "url": "amd-jmacaran/hipCUB",
+      "url": "jayhawk-commits/hipCUB",
       "branch": "develop",
       "category": "projects"
     },
     {
       "name": "rocthrust",
-      "url": "amd-jmacaran/rocThrust",
+      "url": "jayhawk-commits/rocThrust",
       "branch": "develop",
       "category": "projects"
     }
