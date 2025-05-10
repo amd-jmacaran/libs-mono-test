@@ -114,7 +114,7 @@ jobs:
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ steps.compute_labels.outputs.label_add }}"
           fi
           # Check if PR creator is in org and label accordingly
-          if [ -m ${{ steps.is_in_org.outputs.is_in_org }} ]; then
+          if [ -m ${{ steps.org_token_check.outputs.is_in_org }} ]; then
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.ORG_LABEL }}"
           else
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.EXTERNAL_LABEL}}"
