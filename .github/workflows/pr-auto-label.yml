@@ -43,6 +43,14 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
+      - name: Generate a token for ROCm org
+        id: org-token
+        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ env.ORG_TO_CHECK}}
+
       - name: Checkout workflows
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -87,6 +95,14 @@ jobs:
             --repo ${{ github.repository }} \
             --pr ${{ steps.pr_number.outputs.pr_number }}
 
+      - name: Determine ROCm org
+        id: org_token_check
+        env:
+          GH_TOKEN: ${{ steps.org-token.outputs.token }}
+        run: |
+          IS_IN_ORG=$(api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent)
+          echo "is_in_org=$IS_IN_ORG" >> $GITHUB_OUTPUT
+
       - name: Update labels
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
@@ -98,7 +114,7 @@ jobs:
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ steps.compute_labels.outputs.label_add }}"
           fi
           # Check if PR creator is in org and label accordingly
-          if gh api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent; then
+          if [ -m ${{ steps.is_in_org.outputs.is_in_org }} ]; then
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.ORG_LABEL }}"
           else
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.EXTERNAL_LABEL}}"
