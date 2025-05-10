@@ -121,7 +121,7 @@ jobs:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           PR_USER=$(gh pr view "${{ steps.pr_number.outputs.pr_number }}" --json author -q .author.login)
-          if ${{ steps.org_token_check.outputs.is_in_org }}; then
+          if [ -n ${{ steps.org_token_check.outputs.is_in_org }} ]; then
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.ORG_LABEL }}"
           else
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.EXTERNAL_LABEL}}"
