@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
-# Install prefix
+# Install prefix 1
 if(WIN32)
   set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/package CACHE PATH "Install path prefix, prepended onto install directories")
 else()
