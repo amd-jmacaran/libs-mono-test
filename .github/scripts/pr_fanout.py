@@ -104,8 +104,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         logger.debug(f"\tRemote: {entry_naming.subrepo_full_url}")
         logger.debug(f"\tPR title: {entry_naming.pr_title}")
         subtree_push(entry, entry_naming.branch_name, entry_naming.prefix, entry_naming.subrepo_full_url, args.dry_run)
-        pr_exists: bool = client.pr_view(entry.url, entry_naming.branch_name)
-        if not pr_exists:
+        pr_exists = client.pr_view(entry.url, entry_naming.branch_name)
+        if pr_exists not in (None, False):
             # check if the branch already exists in the subrepo and error out if it did not
             # means git subtree push failed
             check_branch_subprocess = subprocess.run(

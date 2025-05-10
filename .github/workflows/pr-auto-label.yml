@@ -6,6 +6,8 @@
 # Steps:
 #   - Run pr_category_label.py to determine which category labels to add/remove
 #   - Update labels on the PR using GitHub CLI (gh)
+#   - If the PR is from a member of the ROCm organization, add the "organization: ROCm" label
+#   - If the PR is from an external contributor, add the "external contribution" label
 #   - Run pr_fanout_sync_labels.py to sync custom labels from the monorepo PR to the subrepo PRs
 
 name: Auto Label PR
@@ -19,10 +21,16 @@ on:
     types:
       - labeled
 
+# ensure that the workflow is not running for the same PR multiple times at once
 concurrency:
   group: pr-auto-label-${{ github.event.pull_request.number }}
   cancel-in-progress: false
-  # ensure that the workflow is not running for the same PR multiple times at once
+
+# the monorepo and subrepos assumed to have these labels created in advance
+env:
+  ORG_TO_CHECK: ROCm
+  ORG_LABEL: "organization: ROCm"
+  EXTERNAL_LABEL: "external contribution"
 
 jobs:
   auto-label-pr:
@@ -89,6 +97,16 @@ jobs:
           fi
           if [ -n "${{ steps.compute_labels.outputs.add }}" ]; then
             gh pr edit "${{ steps.pr_number.outputs.pr }}" --add-label "${{ steps.compute_labels.outputs.add }}"
+          fi
+
+      - name: Check if PR creator is in org and label accordingly
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          if gh api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent; then
+            gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --add-label "${{ env.ORG_LABEL }}"
+          else
+            gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --add-label "${{ env.EXTERNAL_LABEL}}"
           fi
 
       - name: Sync Custom Labels from Monorepo PR

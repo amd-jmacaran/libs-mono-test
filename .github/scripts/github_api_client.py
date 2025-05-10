@@ -19,7 +19,6 @@ Author: Your Name
 
 import requests
 import logging
-import re
 from time import time
 from typing import Any, List, Optional
 from github_app_client import GitHubAppClient
