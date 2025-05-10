@@ -102,11 +102,11 @@ jobs:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           if gh api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent; then
-            gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --add-label "${{ env.ORG_LABEL }}"
+            gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --repo "${{ github.repository }}" --add-label "${{ env.ORG_LABEL }}"
           else
-            gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --add-label "${{ env.EXTERNAL_LABEL}}"
+            gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --repo "${{ github.repository }}" --add-label "${{ env.EXTERNAL_LABEL}}"
             # force remove the org label when the user is not in the org
-            gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --remove-label "${{ env.ORG_LABEL }}"
+            gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --repo "${{ github.repository }}" --remove-label "${{ env.ORG_LABEL }}"
           fi
 
       - name: Sync Custom Labels from Monorepo PR
