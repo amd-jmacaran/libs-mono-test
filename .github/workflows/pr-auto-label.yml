@@ -97,11 +97,7 @@ jobs:
           if [ -n "${{ steps.compute_labels.outputs.label_add }}" ]; then
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ steps.compute_labels.outputs.label_add }}"
           fi
-
-      - name: Check if PR creator is in org and label accordingly
-        env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-        run: |
+          # Check if PR creator is in org and label accordingly
           if gh api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent; then
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.ORG_LABEL }}"
           else
