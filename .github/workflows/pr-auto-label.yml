@@ -75,6 +75,7 @@ jobs:
           else
             PR_NUMBER="${{ github.event.pull_request.number }}"
           fi
+          echo "pr_number is $PR_NUMBER"
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Compute Category Labels for PR
@@ -96,17 +97,13 @@ jobs:
           if [ -n "${{ steps.compute_labels.outputs.label_add }}" ]; then
             gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ steps.compute_labels.outputs.label_add }}"
           fi
-
-      - name: Check if PR creator is in org and label accordingly
-        env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-        run: |
+          # Check if PR creator is in org and label accordingly
           if gh api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent; then
-            gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --add-label "${{ env.ORG_LABEL }}"
+            gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.ORG_LABEL }}"
           else
-            gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --add-label "${{ env.EXTERNAL_LABEL}}"
+            gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --add-label "${{ env.EXTERNAL_LABEL}}"
             # force remove the org label when the user is not in the org
-            gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --remove-label "${{ env.ORG_LABEL }}"
+            gh pr edit "${{ steps.pr_number.outputs.pr_number }}" --remove-label "${{ env.ORG_LABEL }}"
           fi
 
       - name: Sync Custom Labels from Monorepo PR
