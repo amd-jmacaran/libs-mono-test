@@ -101,7 +101,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.org-token.outputs.token }}
         run: |
-          PR_USER=$(gh pr view "steps.pr_number.outputs.pr_number" --json author -q .author.login)
+          PR_USER=$(gh pr view "${{ steps.pr_number.outputs.pr_number }}" --json author -q .author.login)
           IS_IN_ORG=$(gh api orgs/${{ env.ORG_TO_CHECK }}/members/$PR_USER --silent)
           echo "is_in_org=$IS_IN_ORG" >> $GITHUB_OUTPUT
 
