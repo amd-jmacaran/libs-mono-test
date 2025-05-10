@@ -121,6 +121,7 @@ class GitHubCLIClient:
         # no logging the actual request to avoid leaking sensitive information
         for attempt in range(retries):
             response = self.session.request(method, url, json=json)
+            logger.debug(f"Response: {response.status_code} {response.text}")
             if response.ok:
                 return response.json()
             else:
