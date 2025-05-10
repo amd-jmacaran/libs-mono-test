@@ -25,7 +25,7 @@ import argparse
 import subprocess
 import logging
 from typing import List, Optional
-from github_api_client import GitHubAPIClient
+from github_cli_client import GitHubCLIClient
 from repo_config_model import RepoEntry
 from config_loader import load_repo_config
 from utils_fanout_naming import FanoutNaming
@@ -78,7 +78,6 @@ def subtree_push(entry: RepoEntry, branch: str, prefix: str, subrepo_full_url: s
             logging.error(f"stdout:\n{e.stdout}")
             logging.error(f"stderr:\n{e.stderr}")
             raise RuntimeError("git subtree push failed — see logs for details.") from e
-        # subprocess.run(push_cmd, check=True)
 
 def main(argv: Optional[List[str]] = None) -> None:
     """Main function to execute the PR fanout logic."""
@@ -86,7 +85,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     logging.basicConfig(
         level=logging.DEBUG if args.debug else logging.INFO
     )
-    client = GitHubAPIClient()
+    client = GitHubCLIClient()
     config = load_repo_config(args.config)
     # Key in on intersection between the subtrees input argument (new-line delimited) and the config file contents
     subtrees = [line.strip() for line in args.subtrees.splitlines() if line.strip()]
@@ -104,8 +103,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         logger.debug(f"\tRemote: {entry_naming.subrepo_full_url}")
         logger.debug(f"\tPR title: {entry_naming.pr_title}")
         subtree_push(entry, entry_naming.branch_name, entry_naming.prefix, entry_naming.subrepo_full_url, args.dry_run)
-        pr_exists = client.pr_view(entry.url, entry_naming.branch_name)
-        if pr_exists not in (None, False):
+        pr_exists: bool = client.pr_view(entry.url, entry_naming.branch_name)
+        if not pr_exists:
             # check if the branch already exists in the subrepo and error out if it did not
             # means git subtree push failed
             check_branch_subprocess = subprocess.run(
