@@ -100,7 +100,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.org-token.outputs.token }}
         run: |
-          IS_IN_ORG=$(api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent)
+          IS_IN_ORG=$(gh api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent)
           echo "is_in_org=$IS_IN_ORG" >> $GITHUB_OUTPUT
 
       - name: Update labels
