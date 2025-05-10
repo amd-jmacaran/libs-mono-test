@@ -116,7 +116,7 @@ class GitHubCLIClient:
         return results
 
     def _request_json(self, method: str, url: str, json: Optional[dict] = None,
-                    error_msg: str = "", retries: int = 3, backoff: int = 2) -> dict:
+                      error_msg: str = "", retries: int = 3, backoff: int = 2) -> dict:
         """Helper method to perform a request with retries and return JSON response."""
         # no logging the actual request to avoid leaking sensitive information
         for attempt in range(retries):
@@ -124,7 +124,8 @@ class GitHubCLIClient:
             if response.ok:
                 if response.status_code == 204 or not response.text.strip():
                     return {}  # DELETE requests have no json content
-                return response.json()
+                else:
+                    return response.json()
             else:
                 # for api rate limiting, we check the headers for remaining requests and reset time
                 if response.status_code == 403 and response.headers.get("X-RateLimit-Remaining") == "0":
