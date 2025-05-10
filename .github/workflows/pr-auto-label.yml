@@ -42,6 +42,7 @@ jobs:
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
 
       - name: Generate a token for ROCm org
         id: org-token
@@ -100,7 +101,8 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.org-token.outputs.token }}
         run: |
-          IS_IN_ORG=$(gh api orgs/${{ env.ORG_TO_CHECK }}/members/${{ github.event.pull_request.user.login }} --silent)
+          PR_USER=$(gh pr view "steps.pr_number.outputs.pr_number" --json author -q .author.login)
+          IS_IN_ORG=$(gh api orgs/${{ env.ORG_TO_CHECK }}/members/${{ PR_USER }} --silent)
           echo "is_in_org=$IS_IN_ORG" >> $GITHUB_OUTPUT
 
       - name: Update labels
