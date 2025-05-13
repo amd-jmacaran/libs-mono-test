@@ -83,19 +83,17 @@ jobs:
           echo "head_repo=$(jq -r .head_repo pr.json)" >> $GITHUB_OUTPUT
 
       - name: Create new branch for import
+        id: import-branch
         run: |
           BRANCH_NAME=$(echo "${{ steps.prdata.outputs.head_ref }}" | sed 's|/|_|g')
           IMPORT_BRANCH="import/$BRANCH_NAME"
-          echo "IMPORT_BRANCH=$IMPORT_BRANCH" >> $GITHUB_OUTPUT
+          echo "import_branch=$IMPORT_BRANCH" >> $GITHUB_OUTPUT
           git checkout -b "$IMPORT_BRANCH"
 
       - name: Split subrepo prefix from main branch
         run: |
           git subtree pull --prefix=${{ github.event.inputs.subrepo-prefix }} https://github.com/${{ github.event.inputs.subrepo-repo }} ${{ steps.prdata.outputs.head_ref }}
-
-      - name: Push branch
-        run: |
-          git push origin HEAD
+          git push origin ${{ steps.import-branch.outputs.import_branch }}
 
       - name: Create monorepo PR
         env:
@@ -121,6 +119,6 @@ jobs:
           gh pr create \
             --draft \
             --base main \
-            --head "$IMPORT_BRANCH" \
+            --head "${{ steps.import-branch.outputs.import_branch }}" \
             --title "$PR_TITLE" \
             --body-file pr_body.txt
