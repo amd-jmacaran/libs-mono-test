@@ -54,6 +54,11 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           fetch-depth: 0  # Needed for subtree splitting
 
+      - name: Set up Git user
+        run: |
+          git config user.name "assistant-librarian[bot]"
+          git config user.email "assistant-librarian[bot]@users.noreply.github.com"
+
       - name: Fetch subrepo PR info using gh
         id: prdata
         env:
