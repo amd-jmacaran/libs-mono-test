@@ -65,7 +65,13 @@ jobs:
           echo "$PR_JSON" > pr.json
 
           echo "title=$(jq -r .title pr.json)" >> $GITHUB_OUTPUT
-          echo "body=$(jq -r .body pr.json)" >> $GITHUB_OUTPUT
+
+          {
+            echo 'body<<EOF'
+            jq -r .body pr.json
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
           echo "head_ref=$(jq -r .head_ref pr.json)" >> $GITHUB_OUTPUT
           echo "head_repo=$(jq -r .head_repo pr.json)" >> $GITHUB_OUTPUT
 
