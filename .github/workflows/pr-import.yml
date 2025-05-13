@@ -18,7 +18,7 @@ on:
 
 jobs:
   import:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Validate maintainer permissions
@@ -82,14 +82,9 @@ jobs:
           echo "IMPORT_BRANCH=$IMPORT_BRANCH" >> $GITHUB_OUTPUT
           git checkout -b "$IMPORT_BRANCH"
 
-      - name: Add subrepo remote and fetch PR branch
-        run: |
-          git remote add subrepo ${{ steps.prdata.outputs.head_repo }}
-          git fetch subrepo ${{ steps.prdata.outputs.head_ref }}
-
       - name: Split subrepo prefix from main branch
         run: |
-          git subtree pull --prefix=${{ github.event.inputs.subrepo-prefix }} subrepo ${{ steps.prdata.outputs.head_ref }}
+          git subtree pull --prefix=${{ github.event.inputs.subrepo-prefix }} https://github.com/${{ github.event.inputs.subrepo-repo }} ${{ steps.prdata.outputs.head_ref }}
 
       - name: Push branch
         run: |
